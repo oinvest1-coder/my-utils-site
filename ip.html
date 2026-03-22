@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мой IP адрес — определение IP и местоположения</title>
+  <meta name="description" content="Узнайте свой публичный IP-адрес, провайдера, город и страну. Бесплатно и без регистрации.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="back-link">← На главную</a>
+    <div class="tool-container">
+      <h2>🌐 Мой IP адрес</h2>
+      <div id="ip-info" class="result-area">Загрузка информации...</div>
+    </div>
+    <footer>
+      <p>Данные получены через публичный API ipapi.co (только IP и геолокация).</p>
+    </footer>
+  </div>
+  <script>
+    async function getIpInfo() {
+      const container = document.getElementById('ip-info');
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        if (!response.ok) throw new Error('Ошибка запроса');
+        const data = await response.json();
+        container.innerHTML = `
+          <p><strong>IP адрес:</strong> ${data.ip}</p>
+          <p><strong>Город:</strong> ${data.city || '—'}</p>
+          <p><strong>Регион:</strong> ${data.region || '—'}</p>
+          <p><strong>Страна:</strong> ${data.country_name} (${data.country})</p>
+          <p><strong>Провайдер:</strong> ${data.org || '—'}</p>
+          <p><strong>Почтовый код:</strong> ${data.postal || '—'}</p>
+          <p><strong>Часовой пояс:</strong> ${data.timezone || '—'}</p>
+        `;
+      } catch (err) {
+        container.innerHTML = '<p>Не удалось загрузить информацию. Попробуйте обновить страницу.</p>';
+        console.error(err);
+      }
+    }
+    getIpInfo();
+  </script>
+</body>
+</html>
