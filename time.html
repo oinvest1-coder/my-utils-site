@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Точное время — онлайн часы с секундами</title>
+  <meta name="description" content="Точное время в вашем городе и в популярных часовых поясах мира. Часы с секундами.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="back-link">← На главную</a>
+    <div class="tool-container">
+      <h2>⏰ Точное время</h2>
+      <div id="local-time" class="result-area">
+        <p><strong>Ваше местное время:</strong> <span id="clock">--:--:--</span></p>
+        <p><strong>Москва (MSK):</strong> <span id="moscow">--:--:--</span></p>
+        <p><strong>Нью-Йорк (EST):</strong> <span id="ny">--:--:--</span></p>
+        <p><strong>Лондон (GMT):</strong> <span id="london">--:--:--</span></p>
+        <p><strong>Токио (JST):</strong> <span id="tokyo">--:--:--</span></p>
+      </div>
+    </div>
+    <footer>
+      <p>Время синхронизировано с вашим устройством.</p>
+    </footer>
+  </div>
+  <script>
+    function updateTimes() {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('ru-RU', { timeStyle: 'medium' });
+      document.getElementById('clock').textContent = formatter.format(now);
+      
+      // Москва UTC+3
+      const moscow = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
+      document.getElementById('moscow').textContent = formatter.format(moscow);
+      
+      // Нью-Йорк (EST/EDT)
+      const ny = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+      document.getElementById('ny').textContent = formatter.format(ny);
+      
+      // Лондон
+      const london = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/London' }));
+      document.getElementById('london').textContent = formatter.format(london);
+      
+      // Токио
+      const tokyo = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+      document.getElementById('tokyo').textContent = formatter.format(tokyo);
+    }
+    updateTimes();
+    setInterval(updateTimes, 1000);
+  </script>
+</body>
+</html>
