@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Конвертер величин — перевод единиц измерения</title>
+  <meta name="description" content="Перевод длины, веса, объёма: метры в футы, килограммы в фунты, литры в галлоны и обратно.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="back-link">← На главную</a>
+    <div class="tool-container">
+      <h2>📏 Конвертер величин</h2>
+      <div>
+        <select id="category">
+          <option value="length">Длина</option>
+          <option value="weight">Масса</option>
+          <option value="volume">Объём</option>
+        </select>
+      </div>
+      <div style="margin-top: 20px;">
+        <input type="number" id="inputValue" placeholder="Значение" value="1">
+        <select id="fromUnit"></select>
+        <span> = </span>
+        <span id="outputValue">—</span>
+        <select id="toUnit"></select>
+      </div>
+      <button id="convertBtn">Конвертировать</button>
+    </div>
+    <footer>
+      <p>Калькулятор работает локально, данные не покидают ваш браузер.</p>
+    </footer>
+  </div>
+  <script>
+    const units = {
+      length: {
+        meter: { name: 'Метр', factor: 1 },
+        km: { name: 'Километр', factor: 1000 },
+        cm: { name: 'Сантиметр', factor: 0.01 },
+        foot: { name: 'Фут', factor: 0.3048 },
+        inch: { name: 'Дюйм', factor: 0.0254 },
+        mile: { name: 'Миля', factor: 1609.344 }
+      },
+      weight: {
+        kg: { name: 'Килограмм', factor: 1 },
+        g: { name: 'Грамм', factor: 0.001 },
+        lb: { name: 'Фунт', factor: 0.453592 },
+        oz: { name: 'Унция', factor: 0.0283495 }
+      },
+      volume: {
+        liter: { name: 'Литр', factor: 1 },
+        ml: { name: 'Миллилитр', factor: 0.001 },
+        gallon: { name: 'Галлон (US)', factor: 3.78541 },
+        cup: { name: 'Чашка (US)', factor: 0.236588 }
+      }
+    };
+
+    const categorySelect = document.getElementById('category');
+    const fromSelect = document.getElementById('fromUnit');
+    const toSelect = document.getElementById('toUnit');
+    const inputValue = document.getElementById('inputValue');
+    const outputSpan = document.getElementById('outputValue');
+    const convertBtn = document.getElementById('convertBtn');
+
+    function updateUnitSelectors() {
+      const cat = categorySelect.value;
+      const unitObj = units[cat];
+      const keys = Object.keys(unitObj);
+      fromSelect.innerHTML = '';
+      toSelect.innerHTML = '';
+      keys.forEach(key => {
+        const option1 = document.createElement('option');
+        option1.value = key;
+        option1.textContent = unitObj[key].name;
+        fromSelect.appendChild(option1);
+        const option2 = document.createElement('option');
+        option2.value = key;
+        option2.textContent = unitObj[key].name;
+        toSelect.appendChild(option2);
+      });
+      // установим разумные дефолты
+      if (cat === 'length') {
+        fromSelect.value = 'meter';
+        toSelect.value = 'foot';
+      } else if (cat === 'weight') {
+        fromSelect.value = 'kg';
+        toSelect.value = 'lb';
+      } else {
+        fromSelect.value = 'liter';
+        toSelect.value = 'gallon';
+      }
+      convert();
+    }
+
+    function convert() {
+      const cat = categorySelect.value;
+      const fromKey = fromSelect.value;
+      const toKey = toSelect.value;
+      const value = parseFloat(inputValue.value);
+      if (isNaN(value)) {
+        outputSpan.textContent = '?';
+        return;
+      }
+      const fromFactor = units[cat][fromKey].factor;
+      const toFactor = units[cat][toKey].factor;
+      const result = (value * fromFactor) / toFactor;
+      outputSpan.textContent = result.toFixed(4);
+    }
+
+    categorySelect.addEventListener('change', updateUnitSelectors);
+    fromSelect.addEventListener('change', convert);
+    toSelect.addEventListener('change', convert);
+    inputValue.addEventListener('input', convert);
+    convertBtn.addEventListener('click', convert);
+    updateUnitSelectors();
+  </script>
+</body>
+</html>
