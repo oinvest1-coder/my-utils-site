@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сколько дней до Нового года — обратный отсчёт</title>
+  <meta name="description" content="Узнайте, сколько дней, часов, минут и секунд осталось до наступления Нового года.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="back-link">← На главную</a>
+    <div class="tool-container">
+      <h2>🎄 До Нового года</h2>
+      <div id="countdown" class="result-area" style="font-size: 1.5rem; text-align: center;">Загрузка...</div>
+    </div>
+    <footer>
+      <p>Таймер учитывает ваш часовой пояс. Новый год наступает 1 января в 00:00.</p>
+    </footer>
+  </div>
+  <script>
+    function updateCountdown() {
+      const now = new Date();
+      let newYear = new Date(now.getFullYear() + 1, 0, 1, 0, 0, 0);
+      // если сегодня уже после нового года (например, 31 декабря, но ещё не 1 января, то используем следующий год)
+      if (now > newYear) {
+        newYear = new Date(now.getFullYear() + 1, 0, 1, 0, 0, 0);
+      }
+      const diff = newYear - now;
+      if (diff <= 0) {
+        document.getElementById('countdown').innerHTML = '🎉 С Новым годом! 🎉';
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      document.getElementById('countdown').innerHTML = `
+        <div>${days} дн. ${hours} ч. ${minutes} мин. ${seconds} сек.</div>
+        <div style="font-size:1rem; margin-top:10px;">до 1 января 00:00</div>
+      `;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
