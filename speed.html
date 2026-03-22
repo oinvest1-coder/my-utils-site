@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест скорости интернета — ping, загрузка</title>
+  <meta name="description" content="Простой тест скорости интернета: измерение ping и приблизительной скорости загрузки с помощью WebRTC API.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="back-link">← На главную</a>
+    <div class="tool-container">
+      <h2>⚡ Тест скорости интернета</h2>
+      <button id="startTest">Начать тест</button>
+      <div id="speedResult" class="result-area" style="margin-top:20px;">
+        <p>Ping: <span id="ping">—</span> мс</p>
+        <p>Скорость загрузки: <span id="download">—</span> Мбит/с</p>
+        <p><small>*Приблизительные значения, основанные на WebRTC и измерении времени загрузки тестового файла.</small></p>
+      </div>
+    </div>
+    <footer>
+      <p>Для точного измерения используйте профессиональные сервисы.</p>
+    </footer>
+  </div>
+  <script>
+    const startBtn = document.getElementById('startTest');
+    const pingSpan = document.getElementById('ping');
+    const downloadSpan = document.getElementById('download');
+
+    async function measurePing() {
+      const start = performance.now();
+      await fetch('https://httpbin.org/get?nocache=' + Date.now(), { method: 'HEAD', cache: 'no-cache' });
+      const end = performance.now();
+      return end - start;
+    }
+
+    async function measureDownload() {
+      // Скачиваем небольшой тестовый файл (100KB) для замера скорости
+      const fileSizeBytes = 100 * 1024; // 100KB
+      const url = `https://httpbin.org/bytes/${fileSizeBytes}?nocache=${Date.now()}`;
+      const start = performance.now();
+      const response = await fetch(url);
+      const data = await response.arrayBuffer();
+      const end = performance.now();
+      const durationSec = (end - start) / 1000;
+      const bits = fileSizeBytes * 8;
+      const speedMbps = (bits / durationSec) / 1_000_000;
+      return speedMbps;
+    }
+
+    startBtn.addEventListener('click', async () => {
+      startBtn.disabled = true;
+      startBtn.textContent = 'Измерение...';
+      try {
+        const ping = await measurePing();
+        pingSpan.textContent = Math.round(ping);
+        const speed = await measureDownload();
+        downloadSpan.textContent = speed.toFixed(2);
+      } catch (err) {
+        pingSpan.textContent = 'ошибка';
+        downloadSpan.textContent = 'ошибка';
+        console.error(err);
+      } finally {
+        startBtn.disabled = false;
+        startBtn.textContent = 'Начать тест';
+      }
+    });
+  </script>
+</body>
+</html>
